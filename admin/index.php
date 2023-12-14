@@ -1,6 +1,14 @@
 <?php
-// Démarrage de la session
+
+// Démarrer une session
 session_start();
+
+// Vérifie si l'utilisateur peut accéder à cette page
+if (isset($_SESSION['user'])) {
+    header('Location: admin/dashboard.php');
+    exit;
+}
+
 ?>
 <!doctype html>
 <html lang="en">

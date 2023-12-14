@@ -24,7 +24,7 @@ $insertUser = $bdd->prepare("
 $query = $bdd->query("SELECT id FROM users");
 $users = $query->fetchAll();
 
-// Sélectionne tous les utilisateurs
+// Sélectionne tous les articles
 $query = $bdd->query("SELECT id, publication_date FROM articles");
 $articles = $query->fetchAll();
 

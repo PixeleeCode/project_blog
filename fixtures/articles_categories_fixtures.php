@@ -31,7 +31,7 @@ $categories = $query->fetchAll();
 foreach ($articles as $article) {
 
     // Génère un nombre d'itérations aléatoire pour la boucle for()
-    $iteration = $faker->randomNumber(1, 4);
+    $iteration = random_int(1, 4);
 
     for ($j = 0; $j < $iteration; $j++) {
         // Sélectionne une catégorie aléatoirement

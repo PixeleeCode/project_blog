@@ -18,7 +18,7 @@
 session_start();
 
 // Charger les dépendances PHP
-// require_once '../vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 // Vérifie si l'utilisateur peut accéder à cette page
 if (!isset($_SESSION['user'])) {
@@ -78,14 +78,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     // Renomme le nom de l'image
-                    /*$slugify = new \Cocur\Slugify\Slugify();
+                    $slugify = new \Cocur\Slugify\Slugify();
                     $newName = $slugify->slugify("$title-$id");
                     $cover = "$newName.$extension";
 
-                    var_dump($cover);
-                    exit;*/
-
                     // Télécharge la nouvelle image sous le nouveau nom
+                    move_uploaded_file(
+                        $_FILES['cover']['tmp_name'],
+                        "../public/uploads/$cover"
+                    );
 
                 } else {
                     $_SESSION['error'] = "L'image ne doit pas dépasser les 1Mo";

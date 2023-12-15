@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($_FILES['cover']['size'] <= $sizeMax) {
 
                     // Supprime l'ancienne image
-                    if (file_exists("../public/uploads/$cover")) {
+                    if (file_exists("../uploads/$cover")) {
                         // Supprime l'image à l'endroit indiqué
-                        unlink("../public/uploads/$cover");
+                        unlink("../uploads/$cover");
                     }
 
                     // Renomme le nom de l'image
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Télécharge la nouvelle image sous le nouveau nom
                     move_uploaded_file(
                         $_FILES['cover']['tmp_name'],
-                        "../public/uploads/$cover"
+                        "../uploads/$cover"
                     );
 
                 } else {

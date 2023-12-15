@@ -17,6 +17,9 @@
 // Démarrer une session
 session_start();
 
+// Charger les dépendances PHP
+// require_once '../vendor/autoload.php';
+
 // Vérifie si l'utilisateur peut accéder à cette page
 if (!isset($_SESSION['user'])) {
     header('Location: index.php');
@@ -75,7 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     // Renomme le nom de l'image
+                    /*$slugify = new \Cocur\Slugify\Slugify();
+                    $newName = $slugify->slugify("$title-$id");
+                    $cover = "$newName.$extension";
 
+                    var_dump($cover);
+                    exit;*/
 
                     // Télécharge la nouvelle image sous le nouveau nom
 

@@ -14,15 +14,19 @@ require_once '../connexion.php';
 $bdd = connectBdd('root', '', 'blog_db');
 
 // Sélectionne tous les articles avec leurs catégories
-$query = $bdd->query("
+$query = $bdd->prepare("
     SELECT 
         articles.id, articles.title, articles.publication_date, 
         GROUP_CONCAT(categories.name, ', ') AS categories 
     FROM articles 
     LEFT JOIN articles_categories ON articles_categories.article_id = articles.id 
     LEFT JOIN categories ON categories.id = articles_categories.category_id 
+    WHERE user_id = :id
     GROUP BY articles.id; 
 ");
+$query->bindValue(':id', $_SESSION['user']['id']);
+$query->execute();
+
 $articles = $query->fetchAll();
 
 ?>
@@ -78,7 +82,7 @@ $articles = $query->fetchAll();
                                 ?>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-light btn-sm">Editer</a>
+                                <a href="edit.php?id=<?php echo $article['id']; ?>" class="btn btn-light btn-sm">Editer</a>
                                 <a href="#" class="btn btn-danger btn-sm">Supprimer</a>
                             </td>
                         </tr>

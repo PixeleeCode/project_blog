@@ -17,7 +17,7 @@ $bdd = connectBdd('root', '', 'blog_db');
 $query = $bdd->prepare("
     SELECT 
         articles.id, articles.title, articles.publication_date, 
-        GROUP_CONCAT(categories.name, ', ') AS categories 
+        GROUP_CONCAT(categories.name) AS categories 
     FROM articles 
     LEFT JOIN articles_categories ON articles_categories.article_id = articles.id 
     LEFT JOIN categories ON categories.id = articles_categories.category_id 

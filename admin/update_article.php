@@ -35,6 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = htmlspecialchars(strip_tags($_POST['title']));
     $content = htmlspecialchars(strip_tags($_POST['content']));
 
+    // Applique une fonction sur les valeurs d'un tableau
+    $categories = array_map('strip_tags', $_POST['categories']);
+
     // Vérifier si les champs sont complétés
     if (!empty($title) && !empty($content)) {
 
@@ -47,6 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query->bindValue(':content', $content);
         $query->bindValue(':id', $id);
         $query->execute();
+
+        // Mise à jour des catégories liées à l'article
+        $deleteQuery = $bdd->prepare("DELETE FROM articles_categories WHERE article_id = :id");
+        $deleteQuery->bindValue(':id', $id);
+        $deleteQuery->execute();
+
+        $insertCategoryQuery = $bdd->prepare("
+            INSERT INTO articles_categories (article_id, category_id) VALUES (:article_id, :category_id)
+        ");
+
+        foreach($categories as $category) {
+            $insertCategoryQuery->bindValue(':article_id', $id);
+            $insertCategoryQuery->bindValue(':category_id', $category);
+            $insertCategoryQuery->execute();
+        }
 
         // Message de succès
         $_SESSION['success'] = 'Les modifications ont bien été prise en compte';

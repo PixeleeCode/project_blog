@@ -41,13 +41,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Vérifier si les champs sont complétés
     if (!empty($title) && !empty($content)) {
 
+        // Sélectionner le nom de l'image actuellement en BDD
+        $selectCoverQuery = $bdd->prepare("SELECT cover FROM articles WHERE id = :id");
+        $selectCoverQuery->bindValue(':id', $id);
+        $selectCoverQuery->execute();
+
+        // Récupération de la valeur de la colonne et stockage de l'info dans une variable
+        $cover = $selectCoverQuery->fetchColumn();
+
+        // Vérifie si un upload doit être fait
+        if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
+
+            $typeExt = [
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'webp' => 'image/webp',
+            ];
+
+            $sizeMax = 1 * 1024 * 1024;
+            $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
+
+            // Vérifier si le fichier est bien une image autorisée
+            if (array_key_exists($extension, $typeExt) && in_array($_FILES['cover']['type'], $typeExt)) {
+
+                // Vérifie si le poids de l'image ne dépasse pas la limite fixée
+                if ($_FILES['cover']['size'] <= $sizeMax) {
+
+                    // Supprime l'ancienne image
+                    if (file_exists("../public/uploads/$cover")) {
+                        // Supprime l'image à l'endroit indiqué
+                        unlink("../public/uploads/$cover");
+                    }
+
+                    // Renomme le nom de l'image
+
+
+                    // Télécharge la nouvelle image sous le nouveau nom
+
+                } else {
+                    $_SESSION['error'] = "L'image ne doit pas dépasser les 1Mo";
+                    header("Location: edit.php?id=$id");
+                    exit;
+                }
+            } else {
+                $_SESSION['error'] = "Le fichier n'est pas une image conforme";
+                header("Location: edit.php?id=$id");
+                exit;
+            }
+        }
+
         // Mise à jour du titre et du contenu de l'article dans la table "articles"
         $query = $bdd->prepare("
-            UPDATE articles SET title = :title, content = :content WHERE id = :id
+            UPDATE articles SET title = :title, content = :content, cover = :cover WHERE id = :id
         ");
 
         $query->bindValue(':title', $title);
         $query->bindValue(':content', $content);
+        $query->bindValue(':cover', $cover);
         $query->bindValue(':id', $id);
         $query->execute();
 

@@ -84,6 +84,26 @@ $articlesCategories = $query->fetchAll(PDO::FETCH_COLUMN);
             <a href="dashboard.php">Retour</a>
             <h2 class="my-4">Edition</h2>
 
+            <!-- Message de succès -->
+            <?php if(isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php
+                        echo $_SESSION['success'];
+                        unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Messages d'erreurs -->
+            <?php if(isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php
+                        echo $_SESSION['error'];
+                        unset($_SESSION['error']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
             <form action="update_article.php?id=<?php echo $article['id']; ?>" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="title" class="form-label">Titre</label>

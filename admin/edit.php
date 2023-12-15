@@ -9,6 +9,12 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
+// Vérifie si le paramètre "id" est présent et/ou non vide
+if (empty($_GET['id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
 // Connexion à la base de données
 require_once '../connexion.php';
 $bdd = connectBdd('root', '', 'blog_db');
@@ -23,6 +29,13 @@ $query->execute();
 
 // fetch() car je récupère qu'un seul article
 $article = $query->fetch();
+
+// Si aucun article n'existe avec cet ID, redirection vers la dashboard.php
+// Vérifier que l'article sélectionné appartient bien à l'utilisateur connecté
+if (!$article || $article['user_id'] !== $_SESSION['user']['id']) {
+    header('Location: dashboard.php');
+    exit;
+}
 
 // Sélectionne toutes les catégories
 $query = $bdd->query("SELECT * FROM categories");
@@ -71,7 +84,7 @@ $articlesCategories = $query->fetchAll(PDO::FETCH_COLUMN);
             <a href="dashboard.php">Retour</a>
             <h2 class="my-4">Edition</h2>
 
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="update_article.php?id=<?php echo $article['id']; ?>" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="title" class="form-label">Titre</label>
                     <input type="text" class="form-control" id="title" name="title" value="<?php echo $article['title']; ?>">

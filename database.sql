@@ -34,13 +34,13 @@ CREATE TABLE IF NOT EXISTS comments (
     user_id INT NOT NULL,
     article_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (article_id) REFERENCES articles(id)
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
 );
 
 -- Articles & Categories
 CREATE TABLE IF NOT EXISTS articles_categories (
     article_id INT NOT NULL,
     category_id INT NOT NULL,
-    FOREIGN KEY (article_id) REFERENCES articles(id),
+    FOREIGN KEY (article_id) REFERENCES articles(id)  ON DELETE CASCADE ,
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );

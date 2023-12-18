@@ -8,6 +8,10 @@
 // Démarrer une session
 session_start();
 
+// Afficher toutes les erreurs PHP
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+
 // Vérifie si l'utilisateur peut accéder à cette page
 if (!isset($_SESSION['user'])) {
     header('Location: index.php');
@@ -46,8 +50,6 @@ if (!$article || $article['user_id'] !== $_SESSION['user']['id']) {
 $query = $bdd->prepare("DELETE FROM articles WHERE id = :id");
 $query->bindValue(':id', $articleId);
 $query->execute();
-
-
 
 $_SESSION['success'] = "L'article a été correctement supprimé";
 

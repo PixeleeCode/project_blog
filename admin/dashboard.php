@@ -22,8 +22,10 @@ $query = $bdd->prepare("
     LEFT JOIN articles_categories ON articles_categories.article_id = articles.id 
     LEFT JOIN categories ON categories.id = articles_categories.category_id 
     WHERE user_id = :id
-    GROUP BY articles.id; 
+    GROUP BY articles.id
+    ORDER BY articles.publication_date DESC 
 ");
+
 $query->bindValue(':id', $_SESSION['user']['id']);
 $query->execute();
 
@@ -58,7 +60,10 @@ $articles = $query->fetchAll();
         </nav>
 
         <div class="container mt-5">
-            <h2 class="mb-4">Liste des articles</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-4">Liste des articles</h2>
+                <a href="add.php" class="btn btn-success">Nouvel article</a>
+            </div>
 
             <!-- Message de succès -->
             <?php if(isset($_SESSION['success'])): ?>

@@ -59,6 +59,17 @@ $articles = $query->fetchAll();
 
         <div class="container mt-5">
             <h2 class="mb-4">Liste des articles</h2>
+
+            <!-- Message de succès -->
+            <?php if(isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php
+                    echo $_SESSION['success'];
+                    unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
             <table class="table">
                 <thead>
                     <tr>
@@ -83,7 +94,13 @@ $articles = $query->fetchAll();
                             </td>
                             <td>
                                 <a href="edit.php?id=<?php echo $article['id']; ?>" class="btn btn-light btn-sm">Editer</a>
-                                <a href="#" class="btn btn-danger btn-sm">Supprimer</a>
+                                <a
+                                    href="delete_article.php?id=<?php echo $article['id']; ?>"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');"
+                                >
+                                    Supprimer
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

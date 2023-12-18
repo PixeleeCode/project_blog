@@ -1,5 +1,8 @@
 <?php
 
+// Démarrage de la session
+session_start();
+
 // Si aucun paramètre ID ou que celui-ci est vide, redirection vers la page d'accueil
 if (empty($_GET['id'])) {
     header('Location: index.php');
@@ -41,6 +44,23 @@ if (!$article) {
 
 // Créer un tableau de catégories en "explosant" la chaine de caractère créée par la requête SQL
 $article['categories'] = explode(', ', $article['categories']);
+
+// Sélection de tous les commentaires
+$queryComments = $bdd->prepare("
+    SELECT 
+        comments.content,
+        comments.comment_date,
+        users.name as author
+    FROM comments 
+    INNER JOIN users ON comments.user_id = users.id    
+    WHERE article_id = :id
+    ORDER BY comments.comment_date ASC
+");
+$queryComments->bindValue(':id', $_GET['id']);
+$queryComments->execute();
+
+// Récupère tous les commentaires
+$comments = $queryComments->fetchAll();
 
 ?>
 <!doctype html>
@@ -101,11 +121,61 @@ $article['categories'] = explode(', ', $article['categories']);
             <section>
                 <h2>Commentaires</h2>
 
-                <div class="mb-4">
-                    <p class="m-0 p-0">Mon commentaire super sympa</p>
-                    <p class="m-0 p-0">
-                        <small>Ecrit par Jane Doe le 00.00.0000</small>
-                    </p>
+                <?php
+                    if ($comments):
+                        foreach ($comments as $comment):
+                ?>
+                    <div class="mb-4">
+                        <p class="m-0 p-0"><?php echo nl2br($comment['content']); ?></p>
+                        <p class="m-0 p-0">
+                            <?php
+                                $date = DateTime::createFromFormat('Y-m-d H:i:s', $comment['comment_date']);
+                                $postedBy = $date->format('d.m.Y');
+                            ?>
+                            <small>Ecrit par <?php echo $comment['author'] ?> le <?php echo $postedBy; ?></small>
+                        </p>
+                    </div>
+                <?php
+                        endforeach;
+                    else:
+                ?>
+                    <p>Soyez le premier à commenter cet article !</p>
+                <?php
+                    endif;
+                ?>
+
+                <div class="pt-5" id="comments">
+                    <h3 class="mb-4">Poster un commentaire</h3>
+
+                    <!-- Message de succès -->
+                    <?php if(isset($_SESSION['success'])): ?>
+                        <div class="alert alert-success">
+                            <?php
+                            echo $_SESSION['success'];
+                            unset($_SESSION['success']);
+                            ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Messages d'erreurs -->
+                    <?php if(isset($_SESSION['error'])): ?>
+                        <div class="alert alert-danger">
+                            <?php
+                            echo $_SESSION['error'];
+                            unset($_SESSION['error']);
+                            ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if(isset($_SESSION['user'])): ?>
+                        <form action="add_comment.php?id=<?php echo $article['id']; ?>" method="post">
+                            <label for="comment">Commentaire</label>
+                            <textarea name="comment" id="comment" rows="4" class="form-control mb-3 mt-1"></textarea>
+                            <button class="btn btn-primary">Poster mon commentaire</button>
+                        </form>
+                    <?php else: ?>
+                        <p>Veuillez vous connecter pour poster un commentaire</p>
+                    <?php endif; ?>
                 </div>
 
             </section>
